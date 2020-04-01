@@ -20,12 +20,19 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def all(self):
+    def all(self, cls=None):
         """returns a dictionary
         Return:
             returns a dictionary of __object
         """
-        return self.__objects
+        if cls is None:
+            return self.__objects
+        dic = {}
+        for key, value in self.__objects.items():
+            if type(value) is cls:
+               dic[key] = value
+        return dic
+
 
     def new(self, obj):
         """sets __object to given obj
@@ -61,4 +68,4 @@ class FileStorage:
         Update FileStorage, add a new instance publica
         """
         if obj in self.__objects.values():
-           del self.__objects[type(obj).__name__, obj.id]
+            del self.__objects[type(obj).__name__, obj.id]
