@@ -30,9 +30,8 @@ class FileStorage:
         dic = {}
         for key, value in self.__objects.items():
             if type(value) is cls:
-               dic[key] = value
+                dic[key] = value
         return dic
-
 
     def new(self, obj):
         """sets __object to given obj
@@ -68,4 +67,4 @@ class FileStorage:
         Update FileStorage, add a new instance publica
         """
         if obj in self.__objects.values():
-            del self.__objects["{}.{}".format(type(obj).__name__, obj.id)]   
+            del self.__objects[type(obj).__name__, obj.id]
