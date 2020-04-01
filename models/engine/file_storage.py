@@ -55,3 +55,10 @@ class FileStorage:
                     self.__objects[key] = value
         except FileNotFoundError:
             pass
+
+    def delete(self, obj=None):
+        """
+        Update FileStorage, add a new instance publica
+        """
+        if obj in self.__objects.values():
+           del self.__objects[type(obj).__name__, obj.id]
