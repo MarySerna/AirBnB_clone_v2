@@ -6,6 +6,12 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
 from models.base_model import BaseModel, Base
+from models.state import State
+from models.user import User
+from models.place import Place
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 import os
 
 class DBStorage:
