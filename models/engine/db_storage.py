@@ -14,6 +14,7 @@ from models.amenity import Amenity
 from models.review import Review
 import os
 
+
 class DBStorage:
     """
     This class storage database information
