@@ -58,4 +58,3 @@ class Place(BaseModel, Base):
             if review.place_id == self.id:
                 review_list.append(review)
         return review
-
