@@ -24,6 +24,13 @@ class Place(BaseModel, Base):
     """
     __tablename__ = "places"
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+        place_amenity = Table('place_amenity', Base.metadata,
+                              Column('place_id', String(60),
+                                     ForeignKey('places.id')),
+                              Column('amenity_id', String(60),
+                                     ForeignKey('amenities.id')))
+        amenities = relationship("Amenity",
+                                 secondary=place_amenity, viewonly=False)
         reviews = relationship("Review", backref="place", cascade="delete")
         city_id = Column(String(60), ForeignKey("cities.id"), nullable=False)
         user_id = Column(String(60), ForeignKey("users.id"), nullable=False)
@@ -58,3 +65,18 @@ class Place(BaseModel, Base):
             if review.place_id == self.id:
                 review_list.append(review)
         return review
+
+    @property
+    def amenities(self):
+        amenity_list = []
+        for amenity in self.amenity_ids:
+            key = 'Amenity.{}'.format(id)
+            if key in self.__objects.keys():
+                amenity_list.append(self.__objects[key])
+
+    @amenities.setter
+    def amenities(self, obj=None):
+        if type(obj) == Amenity:
+            self.amenity_ids.append(obj.id)
+        else:
+            pass
