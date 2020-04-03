@@ -5,6 +5,11 @@ from sqlalchemy import Column, Table, String, Integer, Float, ForeignKey
 from sqlalchemy.orm import relationship
 import os
 
+place_amenity = Table('place_amenity', Base.metadata,
+                      Column('place_id', String(60),
+                             ForeignKey('places.id')),
+                      Column('amenity_id', String(60),                        
+                             ForeignKey('amenities.id')))
 
 class Place(BaseModel, Base):
     """
@@ -24,11 +29,6 @@ class Place(BaseModel, Base):
     """
     __tablename__ = "places"
     if os.getenv('HBNB_TYPE_STORAGE') == 'db':
-        place_amenity = Table('place_amenity', Base.metadata,
-                              Column('place_id', String(60),
-                                     ForeignKey('places.id')),
-                              Column('amenity_id', String(60),
-                                     ForeignKey('amenities.id')))
         amenities = relationship("Amenity",
                                  secondary=place_amenity, viewonly=False)
         reviews = relationship("Review", backref="place", cascade="delete")
@@ -56,27 +56,28 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
+        amenities = []
 
-    @property
-    def reviews(self):
-        review_dict = models.storage.all(Review)
-        review_list = []
-        for review in review_dict.values():
-            if review.place_id == self.id:
-                review_list.append(review)
-        return review
+        @property
+        def reviews(self):
+            review_dict = models.storage.all(Review)
+            review_list = []
+            for review in review_dict.values():
+                if review.place_id == self.id:
+                    review_list.append(review)
+            return review
 
-    @property
-    def amenities(self):
-        amenity_list = []
-        for amenity in self.amenity_ids:
-            key = 'Amenity.{}'.format(id)
-            if key in self.__objects.keys():
-                amenity_list.append(self.__objects[key])
+        @property
+        def amenities(self):
+            amenity_list = []
+            for amenity in amenity_ids:
+                key = 'Amenity.{}'.format(id)
+                if key in self.__objects.keys():
+                    amenity_list.append(self.__objects[key])
 
-    @amenities.setter
-    def amenities(self, obj=None):
-        if type(obj) == Amenity:
-            self.amenity_ids.append(obj.id)
-        else:
-            pass
+        @amenities.setter
+        def amenities(self, obj=None):
+            if type(obj) == Amenity:
+                self.amenity_ids.append(obj.id)
+            else:
+                pass
