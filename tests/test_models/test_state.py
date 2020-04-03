@@ -2,7 +2,9 @@
 """test for state"""
 import unittest
 import os
+import models
 from models.state import State
+from models.city import City
 from models.base_model import BaseModel
 import pep8
 
@@ -10,57 +12,50 @@ import pep8
 class TestState(unittest.TestCase):
     """this will test the State class"""
 
-    @classmethod
-    def setUpClass(cls):
-        """set up for test"""
-        cls.state = State()
-        cls.state.name = "CA"
+    def test_pep8_conformance_state(self):
+        """Test that we conform to PEP8."""
+        pep8style = pep8.StyleGuide(quiet=True)
+        result = pep8style.check_files(['models/state.py'])
+        self.assertEqual(result.total_errors, 0,
+                         "Found code style errors (and warnings).")
+    def test_class(self):
+        """ creates instance of State"""
+        state1 = State()
+        self.assertEqual(state1.__class__.__name__, "State")
 
-    @classmethod
-    def teardown(cls):
-        """at the end of the test this will tear it down"""
-        del cls.state
 
-    def tearDown(self):
-        """teardown"""
-        try:
-            os.remove("file.json")
-        except Exception:
-            pass
+    def test_father(self):
+        """ chacks if subclass"""
+        state1 = State()
+        self.assertEqual(state1.__class__.__name__, "State")
 
-    def test_pep8_Review(self):
-        """Tests pep8 style"""
-        style = pep8.StyleGuide(quiet=True)
-        p = style.check_files(['models/state.py'])
-        self.assertEqual(p.total_errors, 0, "fix pep8")
+    def test_create_state(self):
+        """ state is created in DB"""
+        if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+            value_a = len(models.storage.all("State"))
+            my_state = State(name="Arizona")
+            my_state.save()
+            self.assertEqual(value_a + 1, len(models.storage.all("State")))
 
-    def test_checking_for_docstring_State(self):
-        """checking for docstrings"""
-        self.assertIsNotNone(State.__doc__)
+    def test_relation_state(self):
+        """check relationship with City"""
+        if os.getenv('HBNB_TYPE_STORAGE') == 'db':
+            my_state = State(name="California")
+            my_state.save()
+            city = City(name="San_Francisco", state_id=my_state.id)
+            city.save()
+            self.assertTrue(city.state == my_state)
+            n_ins = len(models.storage.all("City"))
+            models.storage.delete(city)
+            self.assertEqual(n_ins - 1, len(models.storage.all("City")))
 
-    def test_attributes_State(self):
-        """chekcing if State have attributes"""
-        self.assertTrue('id' in self.state.__dict__)
-        self.assertTrue('created_at' in self.state.__dict__)
-        self.assertTrue('updated_at' in self.state.__dict__)
-        self.assertTrue('name' in self.state.__dict__)
-
-    def test_is_subclass_State(self):
-        """test if State is subclass of BaseModel"""
-        self.assertTrue(issubclass(self.state.__class__, BaseModel), True)
-
-    def test_attribute_types_State(self):
-        """test attribute type for State"""
-        self.assertEqual(type(self.state.name), str)
-
-    def test_save_State(self):
-        """test if the save works"""
-        self.state.save()
-        self.assertNotEqual(self.state.created_at, self.state.updated_at)
-
-    def test_to_dict_State(self):
-        """test if dictionary works"""
-        self.assertEqual('to_dict' in dir(self.state), True)
+    def test_relation_getter(self):
+        if os.getenv('HBNB_TYPE_STORAGE') != 'db':
+            my_state = State(name="California")
+            my_state.save()
+            city = City(name="San_Francisco", state_id=my_state.id)
+            city.save()
+            self.assertTrue(city in my_state.cities)
 
 
 if __name__ == "__main__":

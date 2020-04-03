@@ -1,9 +1,17 @@
 #!/usr/bin/python3
-"""test for BaseModel"""
+"""test for the BaseModel class"""
+
 import unittest
+from datetime import datetime
+import uuid
 import os
 from models.base_model import BaseModel
 import pep8
+from models.city import City
+from models.place import Place
+from models.amenity import Amenity
+from models.state import State
+from models.review import Review
 
 
 class TestBaseModel(unittest.TestCase):
@@ -29,7 +37,7 @@ class TestBaseModel(unittest.TestCase):
             pass
 
     def test_pep8_BaseModel(self):
-        """Testing for pep8"""
+        """test pep8 style"""
         style = pep8.StyleGuide(quiet=True)
         p = style.check_files(['models/base_model.py'])
         self.assertEqual(p.total_errors, 0, "fix pep8")
@@ -49,21 +57,15 @@ class TestBaseModel(unittest.TestCase):
         self.assertTrue(hasattr(BaseModel, "to_dict"))
 
     def test_init_BaseModel(self):
-        """test if the base is an type BaseModel"""
+        """test if the base is an instance of type BaseModel"""
         self.assertTrue(isinstance(self.base, BaseModel))
 
-    def test_save_BaesModel(self):
-        """test if the save works"""
-        self.base.save()
-        self.assertNotEqual(self.base.created_at, self.base.updated_at)
-
     def test_to_dict_BaseModel(self):
-        """test if dictionary works"""
+        """test if to_dictionary method works"""
         base_dict = self.base.to_dict()
         self.assertEqual(self.base.__class__.__name__, 'BaseModel')
         self.assertIsInstance(base_dict['created_at'], str)
         self.assertIsInstance(base_dict['updated_at'], str)
-
 
 if __name__ == "__main__":
     unittest.main()
