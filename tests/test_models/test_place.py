@@ -10,8 +10,8 @@ from models.amenity import Amenity
 from models.state import State
 from models.review import Review
 
-type_storage = os.getenv("HBNB_TYPE_STORAGE", "fs")
 
+type_storage = os.getenv("HBNB_TYPE_STORAGE", "fs")
 
 
 class Testplace(unittest.TestCase):
@@ -38,9 +38,10 @@ class Testplace(unittest.TestCase):
     def setUpClass(cls):
         """set up for test"""
         cls.new_instance = Place(city_id="1001", user_id="1002",
-            name="The room", description="nice", number_rooms=1,
-            number_bathrooms=1, max_guest=2, price_by_night=190,
-            latitude=15.5, longitude=22.22)
+                                 name="The room", description="nice",
+                                 number_rooms=1, number_bathrooms=1,
+                                 max_guest=2, price_by_night=190,
+                                 latitude=15.5, longitude=22.22)
 
     @classmethod
     def teardown(cls):
@@ -88,7 +89,8 @@ class Testplace(unittest.TestCase):
 
     def test_is_subclass_Place(self):
         """test if Place is subclass of Basemodel"""
-        self.assertTrue(issubclass(self.new_instance.__class__, BaseModel), True)
+        self.assertTrue(issubclass(self.new_instance.__class__,
+                                   BaseModel), True)
 
     def test_attribute_types_Place(self):
         """test attribute type for Place"""

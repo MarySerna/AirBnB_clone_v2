@@ -18,11 +18,11 @@ class TestState(unittest.TestCase):
         result = pep8style.check_files(['models/state.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
+
     def test_class(self):
         """ creates instance of State"""
         state1 = State()
         self.assertEqual(state1.__class__.__name__, "State")
-
 
     def test_father(self):
         """ chacks if subclass"""

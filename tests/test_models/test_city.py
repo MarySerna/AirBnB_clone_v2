@@ -11,6 +11,7 @@ from models.state import State
 from models.review import Review
 import models
 
+
 class Testcity(unittest.TestCase):
     """ unittest for City class"""
     def test_pep8_conformance_city(self):
