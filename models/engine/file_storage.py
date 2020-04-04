@@ -68,4 +68,3 @@ class FileStorage:
         """
         if obj in self.__objects.values():
             del self.__objects["{}.{}".format(type(obj).__name__, obj.id)]
-
