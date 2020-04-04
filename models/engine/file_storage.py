@@ -67,4 +67,5 @@ class FileStorage:
         Update FileStorage, add a new instance publica
         """
         if obj in self.__objects.values():
-            del self.__objects[type(obj).__name__, obj.id]
+            del self.__objects["{}.{}".format(type(obj).__name__, obj.id)]
+
