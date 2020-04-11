@@ -18,43 +18,39 @@ def do_pack():
     Generates a .tgz archive from the contents of the web_static
     """
 
-    dtime = datetime.utcnow()
-    archipath = "versions/web_static_{}{}{}{}{}{}.tgz".format(dtime.year,
-                                                              dtime.month,
-                                                              dtime.day,
-                                                              dtime.hour,
-                                                              dtime.minute,
-                                                              dtime.second)
-    if os.path.isdir("versions") is False:
-        if local("mkdir -p versions").failed is True:
-            return None
-    if local("tar -cvzf {} web_static".format(archipath)).failed is True:
+    time = datetime.utcnow().strftime('%Y%m%d%H%M%S')
+    file_name = "versions/web_static_{}.tgz".format(time)
+    try:
+        local("mkdir -p ./versions")
+        local("tar --create --verbose -z --file={} ./web_static"
+              .format(file_name))
+        return file_name
+    except:
         return None
-    return archipath
 
 
 def do_deploy(archive_path):
     """
-    Distributes an archive to the web servers
+        using fabric to distribute archive
     """
-
-    filename = archive_path[9:-4]
-    path = "/data/web_static/releases/{}".format(filename)
-
-    if os.path.exists(archive_path):
-        # Upload the archive to the /tmp/ directory of the web server
-        put(archive_path, '/tmp/')
-
-        # Uncompress the archive to the folder
-        run('mkdir -p {}'.format(path))
-        run('tar -xzf /tmp/{}.tgz -C {}/'.format(filename, path))
-        run('rm /tmp/{}.tgz'.format(filename))
-        run('mv {}/web_static/* {}'.format(path, path))
-        run('rm -rf {}/web_static'.format(path))
-        run('rm -rf /data/web_static/current')
-        run('ln -s {} /data/web_static/current'.format(path))
-        print("New version deployed!")
-
+    if os.path.isfile(archive_path) is False:
+        return False
+    try:
+        archive = archive_path.split("/")[-1]
+        path = "/data/web_static/releases"
+        put("{}".format(archive_path), "/tmp/{}".format(archive))
+        folder = archive.split(".")
+        run("mkdir -p {}/{}/".format(path, folder[0]))
+        new_archive = '.'.join(folder)
+        run("tar -xzf /tmp/{} -C {}/{}/"
+            .format(new_archive, path, folder[0]))
+        run("rm /tmp/{}".format(archive))
+        run("mv {}/{}/web_static/* {}/{}/"
+            .format(path, folder[0], path, folder[0]))
+        run("rm -rf {}/{}/web_static".format(path, folder[0]))
+        run("rm -rf /data/web_static/current")
+        run("ln -sf {}/{} /data/web_static/current"
+            .format(path, folder[0]))
         return True
-    else:
+    except:
         return False
