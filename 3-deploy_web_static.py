@@ -4,11 +4,13 @@ Fabric script that creates and distributes an archive to your web servers,
 using the function deploy
 """
 
+
 import os.path
 from fabric.api import local, put, run, env
 import os
 from datetime import datetime
 from os.path import exists
+
 
 env.hosts = ['34.74.131.201', '3.92.147.2']
 
@@ -58,6 +60,7 @@ def do_deploy(archive_path):
         return True
     else:
         return False
+
 
 def deploy():
     """creates and distributes an archive using the function deploy"""
