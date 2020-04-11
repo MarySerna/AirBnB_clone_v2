@@ -33,24 +33,24 @@ def do_deploy(archive_path):
     """
         using fabric to distribute archive
     """
-    if os.path.isfile(archive_path) is False:
-        return False
-    try:
-        archive = archive_path.split("/")[-1]
-        path = "/data/web_static/releases"
-        put("{}".format(archive_path), "/tmp/{}".format(archive))
-        folder = archive.split(".")
-        run("mkdir -p {}/{}/".format(path, folder[0]))
-        new_archive = '.'.join(folder)
-        run("tar -xzf /tmp/{} -C {}/{}/"
-            .format(new_archive, path, folder[0]))
-        run("rm /tmp/{}".format(archive))
-        run("mv {}/{}/web_static/* {}/{}/"
-            .format(path, folder[0], path, folder[0]))
-        run("rm -rf {}/{}/web_static".format(path, folder[0]))
-        run("rm -rf /data/web_static/current")
-        run("ln -sf {}/{} /data/web_static/current"
-            .format(path, folder[0]))
+
+    b_path = archive_path[9:-4]
+    path = "/data/web_static/releases/{}".format(b_path)
+
+    if os.path.exists(archive_path):
+        # Upload the archive to the /tmp/ directory of the web server
+        put(archive_path, '/tmp/')
+
+        # Uncompress the archive to the folder
+        run('mkdir -p {}'.format(path))
+        run('tar -xzf /tmp/{}.tgz -C {}/'.format(b_path, path))
+        run('rm /tmp/{}.tgz'.format(b_path))
+        run('mv {}/web_static/* {}'.format(path, path))
+        run('rm -rf {}/web_static'.format(path))
+        run('rm -rf /data/web_static/current')
+        run('ln -s {} /data/web_static/current'.format(path))
+        print("New version deployed!")
+
         return True
-    except:
+    else:
         return False
