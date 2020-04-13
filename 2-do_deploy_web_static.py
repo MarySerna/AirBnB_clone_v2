@@ -17,7 +17,6 @@ def do_pack():
     """
     Generates a .tgz archive from the contents of the web_static
     """
-
     time = datetime.utcnow().strftime('%Y%m%d%H%M%S')
     file_name = "versions/web_static_{}.tgz".format(time)
     try:
@@ -33,7 +32,6 @@ def do_deploy(archive_path):
     """
         using fabric to distribute archive
     """
-
     b_path = archive_path[9:-4]
     path = "/data/web_static/releases/{}".format(b_path)
 
@@ -42,7 +40,7 @@ def do_deploy(archive_path):
         put(archive_path, '/tmp/')
 
         # Uncompress the archive to the folder
-        run('mkdir -p {}'.format(path))
+        run('sudo mkdir -p {}'.format(path))
         run('tar -xzf /tmp/{}.tgz -C {}/'.format(b_path, path))
         run('rm /tmp/{}.tgz'.format(b_path))
         run('mv {}/web_static/* {}'.format(path, path))
