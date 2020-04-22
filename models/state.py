@@ -36,5 +36,3 @@ class State(BaseModel, Base):
     else:
         name = Column(String(128), nullable=False)
         cities = relationship("City", backref="state", cascade="delete")
-
-
