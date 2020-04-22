@@ -2,7 +2,7 @@
 """This is the DBstorage class for AirBnB"""
 
 import models
-import sqlalchemy
+from sqlalchemy import MetaData
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
@@ -13,8 +13,8 @@ from models.place import Place
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
-from os import getenv
 import os
+
 
 
 class DBStorage:
@@ -28,25 +28,26 @@ class DBStorage:
     __session = None
 
     def __init__(self):
+        """creates the engine
         """
-        Instantiation of dbstorage class
-        """
-        user = os.getenv('HBNB_MYSQL_USER')
-        passwd = os.getenv('HBNB_MYSQL_PWD')
-        host = os.getenv('HBNB_MYSQL_HOST')
-        db = os.getenv('HBNB_MYSQL_DB')
+        env_nm = os.environ.get('HBNB_ENV')
+        user_nm = os.environ.get('HBNB_MYSQL_USER')
+        passwd = os.environ.get('HBNB_MYSQL_PWD')
+        host = os.environ.get('HBNB_MYSQL_HOST')
+        db_nm = os.environ.get('HBNB_MYSQL_DB')
 
-        connection = "mysql+mysqldb://{}:{}@{}/{}" \
-                     .format(user, passwd, host, db)
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
+                                      .format(user_nm, passwd, host, db_nm),
+                                      pool_pre_ping=True)
 
-        self.__engine = create_engine(connection, pool_pre_ping=True)
-
-        if os.getenv('HBNB_ENV') == 'test':
+        Base.metadata.create_all(self.__engine)
+        Session = sessionmaker(bind=self.__engine)
+        self.__session = Session()
+        if env_nm == "test":
             Base.metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
-        """
-        all objects
+        """returns a dictionary
         """
         classes = ['State', 'City', 'User', 'Place', 'Review', 'Amenity']
         objs = {}
@@ -68,8 +69,7 @@ class DBStorage:
         """
         add the object to the current database session
         """
-        if obj:
-            self.__session.add(obj)
+        self.__session.add(obj)
 
     def save(self):
         """
