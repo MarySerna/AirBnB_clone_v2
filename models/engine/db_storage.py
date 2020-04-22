@@ -2,6 +2,7 @@
 """This is the DBstorage class for AirBnB"""
 
 import models
+import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 from sqlalchemy import create_engine, Column, Integer, String, DateTime
@@ -12,6 +13,7 @@ from models.place import Place
 from models.city import City
 from models.amenity import Amenity
 from models.review import Review
+from os import getenv
 import os
 
 
