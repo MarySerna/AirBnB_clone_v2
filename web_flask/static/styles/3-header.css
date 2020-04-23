@@ -4,12 +4,9 @@ header{
     width: 100%;
     border-bottom: 1px #CCCCCC;
 }
-.logo{
+header .logo{
     background-image: url(../images/logo.png);
     background-repeat: no-repeat;
-    height: inherit;
-    width: inherit;
     left: 20px;
-    top: 5px;
-    position: relative;
+    height: 100%;
 }
